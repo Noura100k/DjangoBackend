@@ -12,6 +12,8 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow.lite.python.interpreter import Interpreter
 from .models import MyImage
+from .api.serializers import MyImageModelSerializer
+from rest_framework.response  import Response
 
 
 # Create your views here.
@@ -52,6 +54,9 @@ arabic_letters = {
  
 }
 
+model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'DeepModel', 'model.tflite')
+
+
 def get_outer_key(inner_key, my_dict):
     for outer_key, inner_dict in my_dict.items():
         if inner_key in inner_dict:
@@ -60,6 +65,50 @@ def get_outer_key(inner_key, my_dict):
             return outer_key
     return None
 
+def post_text_to_rest_api(prediction_class):
+            modified_text = str(prediction_class)
+            text_object = MyImage.objects.create(text=modified_text)
+            serializer = MyImageModelSerializer(text_object)
+
+
+def convert_base64_image(base64_val):
+            im = Image.open(BytesIO(b64decode(base64_val.split(',')[1])))
+            new_image = Image.new("RGBA", im.size, "WHITE")
+            new_image.paste(im, (0, 0), im)
+            if new_image.mode not in ("L", "RGB"):
+                new_image = new_image.convert("RGB")
+            new_image= new_image.resize((224,224))
+            new_image=np.array(new_image)
+            return new_image
+
+            
+
+
+
+
+
+def model_classification(img):
+            interpreter =Interpreter(model_path)
+            interpreter.allocate_tensors()
+            input_data = np.expand_dims(img.astype(np.uint8), axis=0)
+            input_details = interpreter.get_input_details()
+            interpreter.set_tensor(input_details[0]['index'], input_data)
+            interpreter.invoke()
+            output_details = interpreter.get_output_details()
+            output_tensor = interpreter.get_tensor(output_details[0]['index'])
+            output_array = output_tensor[0]
+            predicted_class_index = np.argmax(output_array)
+            print(predicted_class_index)
+            inner_key = predicted_class_index
+            outer_key = get_outer_key(inner_key, arabic_letters)
+            print(f"The parent class of'{inner_key}' is '{outer_key}'")
+
+            return inner_key,outer_key
+
+
+
+
+
 
 # create a view to handle post requests
 @csrf_exempt 
@@ -67,68 +116,25 @@ def index(request):
 
     if request.method == 'POST':
 
-        
+        #---------post request------------------
         image = request.POST.get('image')
-        #print(str(image))
-        im = Image.open(BytesIO(b64decode(image.split(',')[1])))
-        new_image = Image.new("RGBA", im.size, "WHITE")
-        new_image.paste(im, (0, 0), im)
-        #newsize = (224, 224)
-        #new_image= new_image.resize(newsize)
-        #if image.mode not in (“L”, “RGB”):
-        #    image = image.convert(“RGB”)
-        new_image.convert('RGB').save('test.png', "PNG") #, quality=80
-        #opencv_img= cv2.cvtColor(np.array(im), cv2.COLOR_BGR2RGB)
-        #print(opencv_img)
-        #im.save("image9.png")
-        
+        text = request.POST.get('text','')
+        #-----------convert------------------
+        new_image=convert_base64_image(image)
+        #-----------classification--------------------
+        class_name,parent_class_name=model_classification(new_image)
+        #----------------post to api-------------------
+        post_text_to_rest_api(parent_class_name)
+        #---------------------------
 
-        #--------path-----------
-        
-        #model path
-
-        #image path
-        image_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'test.png')
-        print(image_path)
-        img=cv2.imread(image_path)
-        img_resize=cv2.resize(img,(224,224))
-        img=np.array(img_resize)
-
-
-   
-
-        
-        #-----------load model-------------
-        model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'DeepModel', 'model.tflite')
-        interpreter =Interpreter(model_path)
-        interpreter.allocate_tensors()
-        input_data = np.expand_dims(img.astype(np.uint8), axis=0)
-        input_details = interpreter.get_input_details()
-        interpreter.set_tensor(input_details[0]['index'], input_data)
-        interpreter.invoke()
-        output_details = interpreter.get_output_details()
-        output_tensor = interpreter.get_tensor(output_details[0]['index'])
-        output_array = output_tensor[0]
-        # Get the predicted class label
-        predicted_class_index = np.argmax(output_array)
-        # Print the predicted class label
-        print(predicted_class_index)
-        inner_key = predicted_class_index
-        outer_key = get_outer_key(inner_key, arabic_letters)
-        print(f"The parent class of'{inner_key}' is '{outer_key}'")
-        #my_image = MyImage()
-        #my_image.image.save('resized_image.png', new_image, save=True)
-        #my_image.text(f"The parent class of'{inner_key}' is '{outer_key}'")
-
-
-
-    
-        return HttpResponse('Success!')
+        return HttpResponse('succ')
     else:
         # Handle GET requests here
         # ...
 
-        return HttpResponse('Hello, world!')
+        return HttpResponse('something in post :()')
+
+
 
 
 
