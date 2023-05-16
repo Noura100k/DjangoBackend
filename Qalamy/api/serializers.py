@@ -38,5 +38,5 @@ class LettersModelSerializer(serializers.ModelSerializer):
 class MyImageModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyImage
-        fields= ('id','text','image')
+        fields= ('id','text')
 

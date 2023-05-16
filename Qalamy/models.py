@@ -74,7 +74,7 @@ class Letters(models.Model):
 # image-----------------//
 class MyImage(models.Model):
     text=models.TextField(max_length=200)
-    image = models.ImageField(blank=True, upload_to='qrcodes/')
+
     def __str__(self):
         return str(self.text)
 
