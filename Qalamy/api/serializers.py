@@ -40,3 +40,4 @@ class MyImageModelSerializer(serializers.ModelSerializer):
         model = MyImage
         fields= ('id','text')
 
+

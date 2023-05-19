@@ -22,5 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/',include('Qalamy.api.urls')),
     path('classify/',views.index,name="Classification"),
+    path('upload-audio/',views.AudioUploadView.as_view(),name="upload_audio"),
+    
     
 ]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

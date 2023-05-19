@@ -5,6 +5,7 @@ from django.http import HttpResponseBadRequest
 from PIL import Image
 from io import BytesIO
 from base64 import b64decode
+import base64
 import cv2
 import numpy as np
 import os
@@ -14,6 +15,12 @@ from tensorflow.lite.python.interpreter import Interpreter
 from .models import MyImage
 from .api.serializers import MyImageModelSerializer
 from rest_framework.response  import Response
+#--------------
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser
+from rest_framework.response import Response
+from pydub import AudioSegment
+
 
 
 # Create your views here.
@@ -134,6 +141,20 @@ def index(request):
 
         return HttpResponse('something in post :()')
 
+
+
+
+class AudioUploadView(APIView):
+    parser_classes = [MultiPartParser]
+
+    def post(self, request):
+        audio_file =request.POST.get('audio')
+        #print(audio_file)
+        print(type(audio_file))
+        wav_file = open("tr.m4a", "wb")
+        decode_string = base64.b64decode(audio_file)
+        wav_file.write(decode_string)
+        return Response(audio_file)
 
 
 

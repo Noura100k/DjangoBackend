@@ -78,3 +78,5 @@ class MyImage(models.Model):
     def __str__(self):
         return str(self.text)
 
+
+

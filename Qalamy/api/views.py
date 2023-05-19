@@ -41,3 +41,4 @@ class LettersViewSet(viewsets.ModelViewSet):
 class MyImageViewSet(viewsets.ModelViewSet):
     queryset=MyImage.objects.all()
     serializer_class=MyImageModelSerializer
+
