@@ -12,8 +12,8 @@ import os
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow.lite.python.interpreter import Interpreter
-from .models import MyImage
-from .api.serializers import MyImageModelSerializer
+from .models import MyImage,MyVoiceParent
+from .api.serializers import MyImageModelSerializer,MyVoiceParentModelSerializer
 from rest_framework.response  import Response
 #--------------
 from rest_framework.views import APIView
@@ -149,11 +149,15 @@ class AudioUploadView(APIView):
 
     def post(self, request):
         audio_file =request.POST.get('audio')
+        text =request.POST.get('text')
         #print(audio_file)
         print(type(audio_file))
-        wav_file = open("tr.m4a", "wb")
+        wav_file = open("voice.m4a", "wb")
         decode_string = base64.b64decode(audio_file)
         wav_file.write(decode_string)
+        voice_in_m4a_format=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),  'voice.m4a')
+        MyVoiceParent_object = MyVoiceParent.objects.create(text=text,audio=voice_in_m4a_format)
+        serializer = MyVoiceParentModelSerializer(MyVoiceParent_object)
         return Response(audio_file)
 
 

@@ -79,4 +79,11 @@ class MyImage(models.Model):
         return str(self.text)
 
 
+# image-----------------//
+class MyVoiceParent(models.Model):
+    audio=models.FileField( upload_to ='qrcodes/',blank=True)
+    text=models.TextField(max_length=200)
+
+    def __str__(self):
+        return str(self.text)
 

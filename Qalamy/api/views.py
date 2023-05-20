@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from ..models import Parents,Child,Challenges,Words,Letters,MyImage
-from .serializers import ParentsModelSerializer, ChildModelSerializer,ChallengesModelSerializer,WordsModelSerializer,LettersModelSerializer,MyImageModelSerializer
+from ..models import Parents,Child,Challenges,Words,Letters,MyImage,MyVoiceParent
+from .serializers import ParentsModelSerializer, ChildModelSerializer,ChallengesModelSerializer,WordsModelSerializer,LettersModelSerializer,MyImageModelSerializer, MyVoiceParentModelSerializer
 
 
 #parent----------------------------//
@@ -42,3 +42,8 @@ class MyImageViewSet(viewsets.ModelViewSet):
     queryset=MyImage.objects.all()
     serializer_class=MyImageModelSerializer
 
+#voice-----------------------------//
+
+class MyVoiceParentViewSet(viewsets.ModelViewSet):
+    queryset=MyVoiceParent.objects.all()
+    serializer_class=MyVoiceParentModelSerializer

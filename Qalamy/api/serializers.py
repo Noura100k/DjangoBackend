@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Parents,Child,Challenges,Words,Letters,MyImage
+from ..models import Parents,Child,Challenges,Words,Letters,MyImage,MyVoiceParent
 
 #http://127.0.0.1:8000/api/Parents/
 
@@ -39,5 +39,11 @@ class MyImageModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyImage
         fields= ('id','text')
+
+#audio---------------------------------///
+class MyVoiceParentModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MyVoiceParent
+        fields= ('id','text','audio')
 
 
