@@ -6,9 +6,9 @@ from io import BytesIO
 
 # Parents--------------------//
 class Parents(models.Model):
-    name=models.CharField(max_length=200)
-    email=models.EmailField(max_length = 254)
-    password=models.CharField(max_length=50)
+    name=models.CharField(blank=True,max_length=200)
+    email=models.EmailField(max_length = 254,unique=True)
+    password=models.CharField(max_length=50,blank=True)
 
     #has=models.ManyToManyField(Child)
 
@@ -17,12 +17,12 @@ class Parents(models.Model):
 
 # Child--------------------//
 class Child(models.Model):
-    name=models.CharField(max_length=200)
-    username=models.CharField(max_length=200)
-    sex=models.CharField(max_length = 200)
+    name=models.CharField(max_length=200,blank=True)
+    username=models.CharField(max_length=200,unique=True)
+    sex=models.CharField(max_length = 200,blank=True)
     age=models.IntegerField()
     image=models.ImageField(blank=True, upload_to='qrcodes/')
-    password=models.CharField(max_length=50)
+    password=models.CharField(max_length=50,blank=True)
     parent_ID=models.ForeignKey(Parents, on_delete=models.CASCADE)
     #has=models.ManyToManyField(Challenges)
 

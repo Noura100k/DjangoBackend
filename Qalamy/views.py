@@ -20,6 +20,8 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from pydub import AudioSegment
+from django.core.files.storage import FileSystemStorage
+from django.core.files import File
 
 
 
@@ -152,16 +154,26 @@ class AudioUploadView(APIView):
         text =request.POST.get('text')
         #print(audio_file)
         print(type(audio_file))
-        wav_file = open("voice.m4a", "wb")
+        wav_file = open("voice.mp3", "wb")
         decode_string = base64.b64decode(audio_file)
         wav_file.write(decode_string)
-        voice_in_m4a_format=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),  'voice.m4a')
-        MyVoiceParent_object = MyVoiceParent.objects.create(text=text,audio=voice_in_m4a_format)
-        serializer = MyVoiceParentModelSerializer(MyVoiceParent_object)
-        return Response(audio_file)
+        voice_in_mp3_format =os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),  'voice.mp3')
 
+        # creating new object
+        MyVoiceParent_object = MyVoiceParent()
 
+        # saving the file 
+        local_file = open(voice_in_mp3_format, 'rb')
+        djangofile = File(local_file)
+        MyVoiceParent_object.audio.save("voice.mp3", djangofile)
+        local_file.close()
 
+        # adding text 
+        MyVoiceParent_object.text = "sdfsdf"
 
+        # saving the object
+        MyVoiceParent_object.save()
+        return HttpResponse('succ')
+        
 
 
