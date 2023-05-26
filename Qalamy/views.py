@@ -228,3 +228,56 @@ class LetterChallUploadView(APIView):
         LettersExam_object.save()
         return HttpResponse('succ')
         
+
+
+           
+def post_word_to_rest_api(prediction_class,AcutalClass,Wordid):
+    if prediction_class!=AcutalClass:
+        correction=0
+    else:
+        correction=1
+    print(correction)
+    CorrectionWord_object = CorrectionWords()
+    CorrectionWord_object.correction=correction
+    CorrectionWord_object.words_ID=WordsExam(id=Wordid)
+    CorrectionWord_object.save()
+    
+ 
+
+
+# create a view to handle post requests
+@csrf_exempt 
+def indexWord(request):
+
+    if request.method == 'POST':
+
+        #---------post request------------------
+        print("shhsu")
+        word=''
+        image0 = request.POST.get('image0')
+        image1 = request.POST.get('image1')
+        image2 = request.POST.get('image2')
+        image3 = request.POST.get('image3')
+        text = request.POST.get('text')
+        words_id = request.POST.get('words_id')
+        print(words_id,text)
+        imagesForWord=[image0,image1,image2,image3]
+
+        for x in imagesForWord:
+            new_image=convert_base64_image(x)
+            class_name,parent_class_name=model_classification(new_image)
+            print(parent_class_name)
+            word+=parent_class_name
+
+        post_word_to_rest_api(word,text,words_id)
+        print(word)
+        print("محمد")
+        
+
+        return HttpResponse('succ')
+    else:
+        # Handle GET requests here
+        # ...
+
+        return HttpResponse('something in post :()')
+

@@ -24,4 +24,5 @@ urlpatterns = [
     path('classify/',views.index,name="Classification"),
     path('upload-audio/',views.AudioUploadView.as_view(),name="upload_audio"),
     path('uploud-letterExam/',views.LetterChallUploadView.as_view(),name="uploud-letterExam"),
+    path('uploud-WordExam/',views.indexWord,name="uploud-wordExam"),
 ]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
