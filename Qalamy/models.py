@@ -33,11 +33,10 @@ class Child(models.Model):
 # Challenges----------------//
 
 class Challenges(models.Model):
-    chall_name=models.CharField(max_length=200)
-    chall_type=models.CharField(max_length=200)
+    chall_name=models.CharField(max_length=200,blank=True)
+    chall_type=models.CharField(max_length=200,blank=True)
     grade=models.IntegerField()
-    date=models.DateField()
-    parent_ID=models.ForeignKey(Parents, on_delete=models.CASCADE)
+    date=models.TextField(max_length=200,blank=True)
     child_ID=models.ForeignKey(Child, on_delete=models.CASCADE)
     #contain_letters=models.ManyToManyField(Letters)
     #contain_words=models.ManyToManyField(words)
@@ -48,12 +47,10 @@ class Challenges(models.Model):
 # words-------------------//
 # l need to fix voice type
 class Words(models.Model):
-    text=models.TextField(max_length=200)
-    voice=models.TextField(max_length=200)
+    text=models.TextField(max_length=200,blank=True)
+    voice=models.FileField( upload_to ='qrcodes/',blank=True)
     image=models.ImageField(blank=True, upload_to='qrcodes/')
     letter_No=models.IntegerField()
-    correction=models.IntegerField()
-    child_ID=models.ForeignKey(Child, on_delete=models.CASCADE)
     chall_ID=models.ForeignKey(Challenges, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -61,11 +58,9 @@ class Words(models.Model):
 
 # Letters-----------------//
 class Letters(models.Model):
-    text=models.TextField(max_length=200)
-    voice=models.TextField(max_length=200)
+    text=models.TextField(max_length=200,blank=True)
+    voice=models.FileField( upload_to ='qrcodes/',blank=True)
     image=models.ImageField(blank=True, upload_to='qrcodes/')
-    correction=models.IntegerField()
-    child_ID=models.ForeignKey(Child, on_delete=models.CASCADE)
     chall_ID=models.ForeignKey(Challenges, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -87,3 +82,39 @@ class MyVoiceParent(models.Model):
     def __str__(self):
         return str(self.text)
 
+# new for test
+
+class WordsExam(models.Model):
+    text=models.TextField(max_length=200,blank=True)
+    voice=models.FileField( upload_to ='qrcodes/',blank=True)
+    image=models.ImageField(blank=True, upload_to='qrcodes/')
+    letter_No=models.IntegerField()
+    challenges_ID=models.ForeignKey(Challenges, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.text)
+
+# Letters-----------------//
+class LettersExam(models.Model):
+    text=models.TextField(max_length=200,blank=True)
+    voice=models.FileField( upload_to ='qrcodes/',blank=True)
+    image=models.ImageField(blank=True, upload_to='qrcodes/')
+    challenges_ID=models.ForeignKey(Challenges, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.text)
+
+
+class CorrectionLetters(models.Model):
+    correction=models.IntegerField()
+    letter_ID=models.ForeignKey(LettersExam, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.correction)
+
+class CorrectionWords(models.Model):
+    correction=models.IntegerField()
+    words_ID=models.ForeignKey(WordsExam, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.correction)

@@ -23,6 +23,5 @@ urlpatterns = [
     path('api/',include('Qalamy.api.urls')),
     path('classify/',views.index,name="Classification"),
     path('upload-audio/',views.AudioUploadView.as_view(),name="upload_audio"),
-    
-    
+    path('uploud-letterExam/',views.LetterChallUploadView.as_view(),name="uploud-letterExam"),
 ]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Parents,Child,Challenges,Words,Letters,MyImage,MyVoiceParent
+from ..models import Parents,Child,Challenges,Words,Letters,MyImage,MyVoiceParent,WordsExam,LettersExam,CorrectionWords,CorrectionLetters
 
 #http://127.0.0.1:8000/api/Parents/
 
@@ -20,19 +20,19 @@ class ChildModelSerializer(serializers.ModelSerializer):
 class ChallengesModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Challenges
-        fields= ('id','chall_name','chall_type','grade','date','parent_ID','child_ID')
+        fields= ('id','chall_name','chall_type','grade','date','child_ID')
 
 #Words---------------------------------///
 class WordsModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Words
-        fields= ('id','text','voice','image','letter_No','correction','child_ID','chall_ID')
+        fields= ('id','text','voice','image','letter_No','correction','chall_ID')
 
 #Letters---------------------------------///
 class LettersModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Letters
-        fields= ('id','text','voice','image','correction','child_ID','chall_ID')
+        fields= ('id','text','voice','image','correction','chall_ID')
 
 #image---------------------------------///
 class MyImageModelSerializer(serializers.ModelSerializer):
@@ -47,3 +47,25 @@ class MyVoiceParentModelSerializer(serializers.ModelSerializer):
         fields= ('id','text','audio')
 
 
+#new---------------------------------///
+class WordsExamModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WordsExam
+        fields= ('id','text','voice','image','letter_No','challenges_ID')
+
+#new---------------------------------///
+class LettersExamModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LettersExam
+        fields= ('id','text','voice','image','challenges_ID')
+#new---------------------------------///
+class CorrectionWordsModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CorrectionWords
+        fields= ('id','correction','words_ID')
+
+#new---------------------------------///
+class CorrectionLettersModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CorrectionLetters
+        fields= ('id','correction','letter_ID')

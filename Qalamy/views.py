@@ -23,43 +23,46 @@ from pydub import AudioSegment
 from django.core.files.storage import FileSystemStorage
 from django.core.files import File
 
+from .models import Challenges,WordsExam,LettersExam,CorrectionWords,CorrectionLetters
+
 
 
 # Create your views here.
+# Create your views here.
 arabic_letters = {
-    'ء': {46: '\u0621'},
-    'أ': {91: '\u0623',40: '\uFE84'},
-    'ؤ': {41: '\u0624'},
-    'إ': {19: '\u0625',90: '\uFE88'},
-    'ا': {105: '\u0627',39: '\uFE8F'},
-    'ئ': {37: '\u0626',  74: '\uFE8C'},
-    'ب': {16: '\u0628', 31: '\uFE91', 100: '\uFE92', 4: '\uFE93'},
-    'ت': {1: '\u062A', 77: '\uFE97', 61: '\uFE98', 102: '\uFE99'},
-    'ث': {82: '\u062B', 23: '\uFE9B', 2: '\uFE9C', 58: '\uFE9D'},
-    'ج': {99: '\u062C', 27: '\uFE9F', 48: '\uFEA0', 89: '\uFEA1'},
-    'ح': {9: '\u062D', 54: '\uFEA3', 81: '\uFEA4', 17: '\uFEA5'},
-    'خ': {12: '\u062E', 73: '\uFEA7', 76: '\uFEA8',79: '\uFEA9'},
-    'د': {93: '\u062F', 84: '\uFEAA'},
-    'ذ': {65: '\u0630', 94: '\uFEAB'},
-    'ر': {34: '\u0631', 71: '\uFEAD'},
-    'ز': {88: '\u0632', 8: '\uFEAF'},
-    'س': {63: '\u0633', 0: '\uFEB3', 49: '\uFEB4', 43: '\uFEB5'},
-    'ش': {22: '\u0634', 38: '\uFEB7', 62: '\uFEB8', 20: '\uFEB9'},
-    'ص': {52: '\u0635', 5: '\uFEBB', 80: '\uFEBC', 104: '\uFEBD'},
-    'ض': {68: '\u0636', 75: '\uFEBF', 29: '\uFEC0', 69: '\uFEC1'},
-    'ط': {28: '\u0637', 87: '\uFEC3', 50: '\uFEC4', 98: '\uFEC5'}, #i am not sure
-    'ظ': {45: '\u0638',26: '\uFEC7', 70: '\uFEC8', 15: '\uFEC9', 'medial2': '\uFECA'},#i am not sure
-    'ع': {13: '\u0639', 3: '\uFECB', 32: '\uFECC', 14: '\uFECD'},
-    'غ': {57: '\u063A', 96: '\uFECF', 85: '\uFED0', 21: '\uFED1'},# iam not sure
-    'ف': {107: '\u0641', 25: '\uFED7', 55: '\uFED8', 51: '\uFED9'},
-    'ق': {47: '\u0642', 101: '\uFEDB', 18: '\uFEDC', 97: '\uFEDD', 'medial2': '\uFEDE'},
-    'ك': {44: '\u0643', 103: '\uFEF3', 78: '\uFEF4', 66: '\uFEF5'},
-    'ل': {106: '\u0644', 7: '\uFEFB', 30: '\uFEFC', 56: '\uFEFD'},
-    'م': {35: '\u0645', 11: '\uFEE3', 64: '\uFEE4', 95: '\uFEE5'},
-    'ن': {72: '\u0646', 86: '\uFEEB',24: '\uFEEC', 92: '\uFEED'},
-    'ه': {67: '\u0647', 60: '\uFEEF', 6: '\uFEF0', 42: '\uFEF1'},
-    'و': {33: '\u0648',36: '\uFEE5'},
-    'ي': {59: '\u064A', 10: '\uFEF3', 83: '\uFEF4', 35: '\uFEF5', 'medial2': '\uFEF6'},
+    'ء': {46: 'ء'},
+    'أ': {91: 'أ',40: 'ـأ'},
+    'ؤ': {41: 'ؤ'},
+    'إ': {19: 'إ',90: 'ـإ'},
+    'ا': {105: 'ا',39: 'ـا'},
+    'ئ': {37: 'ـئ',  74: 'ـئـ'},
+    'ب': {16: 'ب', 31: 'ـب', 100: 'بـ', 4: 'ـبـ'},
+    'ت': {1: 'ت', 77: 'ـت', 61: 'تـ', 102: 'ـتـ'},
+    'ث': {82: 'ث', 23: 'ـث', 2: 'ثـ', 58: 'ـثـ'},
+    'ج': {99: 'ج', 27: 'ـج', 48: 'جـ', 89: 'ـجـ'},
+    'ح': {9: 'ح', 54: 'ـح', 81: 'حـ', 17: 'ـحـ'},
+    'خ': {12: 'خ', 73: 'ـخ', 76: 'خـ',79: 'ـخـ'},
+    'د': {93: 'د', 84: 'ـد'},
+    'ذ': {65: 'ذ', 94: 'ـذ'},
+    'ر': {34: 'ر', 71: 'ـر'},
+    'ز': {88: 'ز', 8: 'ـز'},
+    'س': {63: 'س', 0: 'ـس', 49: 'سـ', 43: 'ـسـ'},
+    'ش': {22: 'ش', 38: 'ـش', 62: 'شـ', 20: 'ـشـ'},
+    'ص': {52: 'ص', 5: 'ـص', 80: 'صـ', 104: 'ـصـ'},
+    'ض': {68: 'ض', 75: 'ـض', 29: 'ضـ', 69: 'ـضـ'},
+    'ط': {28: 'lط', 87: 'ـط', 50: 'طـ', 98: 'ـط'}, #i am not sure
+    'ظ': {45: 'ظ',26: 'ـظ', 70: 'ظـ', 15: 'ـظـ', 'medial2': '\uFECA'},#i am not sure
+    'ع': {13: 'ع', 3: 'ـع', 32: 'عـ', 14: 'ـعـ'},
+    'غ': {57: 'غ', 96: 'ـغ', 85: 'غـ', 21: 'gyn middle'},# iam not sure
+    'ف': {107: 'ف', 25: 'ـف', 55: 'فـ', 51: 'ـفـ'},
+    'ق': {47: 'ق', 101: 'ـق', 18: 'قـ', 97: 'ـقـ', 'medial2': '\uFEDE'},
+    'ك': {44: 'ك', 103: 'ـك', 78: 'كـ', 66: 'ـكـ'},
+    'ل': {106: 'ل', 7: 'ـل', 30: 'لـ', 56: 'ـلـ'},
+    'م': {35: 'م', 11: 'ـم', 64: 'مـ', 95: 'ـمـ'},
+    'ن': {72: 'ن', 86: 'ـن',24: 'نـ', 92: 'ـنـ'},
+    'ه': {67: 'اه', 60: 'ـه', 6: 'هـ', 42: 'ـهـ'},
+    'و': {33: 'و',36: 'ـو'},
+    'ي': {59: 'ي', 10: 'ـي', 83: 'يـ', 35: 'م', 'medial2': '\uFEF6'},
  
 }
 
@@ -90,9 +93,19 @@ def convert_base64_image(base64_val):
             new_image=np.array(new_image)
             return new_image
 
-            
 
-
+def post_letter_to_rest_api(prediction_class,AcutalClass,letterid):
+    if prediction_class!=AcutalClass:
+        correction=0
+    else:
+        correction=1
+    print(correction)
+    CorrectionLetters_object = CorrectionLetters()
+    CorrectionLetters_object.correction=correction
+    CorrectionLetters_object.letter_ID=LettersExam(id=letterid)
+    CorrectionLetters_object.save()
+    
+ 
 
 
 
@@ -127,12 +140,16 @@ def index(request):
 
         #---------post request------------------
         image = request.POST.get('image')
-        text = request.POST.get('text','')
+        text = request.POST.get('text')
+        letter_id = request.POST.get('letter_id')
+        print(text,letter_id)
         #-----------convert------------------
         new_image=convert_base64_image(image)
         #-----------classification--------------------
         class_name,parent_class_name=model_classification(new_image)
+
         #----------------post to api-------------------
+        post_letter_to_rest_api(parent_class_name,text,letter_id)
         post_text_to_rest_api(parent_class_name)
         #---------------------------
 
@@ -177,3 +194,37 @@ class AudioUploadView(APIView):
         
 
 
+class LetterChallUploadView(APIView):
+    parser_classes = [MultiPartParser]
+
+    def post(self, request):
+        voice_file =request.POST.get('voice')
+        text =request.POST.get('text')
+        chall_ID =request.POST.get('challenges_ID')
+
+        #print(audio_file)
+        print(type(voice_file))
+        wav_file = open("voice.mp3", "wb")
+        decode_string = base64.b64decode(voice_file)
+        wav_file.write(decode_string)
+        voice_in_mp3_format =os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),  'voice.mp3')
+
+        # creating new object
+        LettersExam_object = LettersExam()
+
+        # saving the file 
+        local_file = open(voice_in_mp3_format, 'rb')
+        djangofile = File(local_file)
+        LettersExam_object.voice.save("voice.mp3", djangofile)
+        local_file.close()
+
+        # adding text 
+        LettersExam_object.text = text
+        #challenges_object_data=Challenges.objects.get(id=chall_ID)
+        #c_id=int(challenges_object_data)
+        LettersExam_object.challenges_ID = Challenges(id=int(chall_ID))
+
+        # saving the object
+        LettersExam_object.save()
+        return HttpResponse('succ')
+        
