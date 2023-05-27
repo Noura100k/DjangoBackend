@@ -193,15 +193,15 @@ class AudioUploadView(APIView):
         return HttpResponse('succ')
         
 
+@csrf_exempt 
+def LetterChallUploadView(request):
+   
 
-class LetterChallUploadView(APIView):
-    parser_classes = [MultiPartParser]
-
-    def post(self, request):
+    if request.method == 'POST':
         voice_file =request.POST.get('voice')
         text =request.POST.get('text')
         chall_ID =request.POST.get('challenges_ID')
-
+        print(chall_ID)
         #print(audio_file)
         print(type(voice_file))
         wav_file = open("voice.mp3", "wb")
@@ -212,23 +212,67 @@ class LetterChallUploadView(APIView):
         # creating new object
         LettersExam_object = LettersExam()
 
-        # saving the file 
-        local_file = open(voice_in_mp3_format, 'rb')
-        djangofile = File(local_file)
-        LettersExam_object.voice.save("voice.mp3", djangofile)
-        local_file.close()
 
         # adding text 
         LettersExam_object.text = text
         #challenges_object_data=Challenges.objects.get(id=chall_ID)
         #c_id=int(challenges_object_data)
-        LettersExam_object.challenges_ID = Challenges(id=int(chall_ID))
-
+        LettersExam_object.challenges_ID = Challenges(id=chall_ID)
+        # saving the file 
+        local_file = open(voice_in_mp3_format, 'rb')
+        djangofile = File(local_file)
+        LettersExam_object.voice.save("voice.mp3", djangofile)
+        local_file.close()
         # saving the object
         LettersExam_object.save()
         return HttpResponse('succ')
-        
+    else:
+        return HttpResponse('something in post :()')
 
+
+
+@csrf_exempt 
+def WordChallUploadView(request):
+   
+
+    if request.method == 'POST':
+   
+        voice_file =request.POST.get('voice')
+        text =request.POST.get('text')
+        chall_ID =request.POST.get('challenges_ID')
+        letterNo=request.POST.get('letter_No')
+        print(chall_ID)
+        #print(audio_file)
+        print(type(voice_file))
+        wav_file = open("voice.mp3", "wb")
+        decode_string = base64.b64decode(voice_file)
+        wav_file.write(decode_string)
+        voice_in_mp3_format =os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),  'voice.mp3')
+
+        # creating new object
+        WordsExam_object = WordsExam()
+
+
+        # adding text 
+        WordsExam_object.text = text
+        #challenges_object_data=Challenges.objects.get(id=chall_ID)
+        #c_id=int(challenges_object_data)
+        WordsExam_object.challenges_ID = Challenges(id=chall_ID)
+        
+        WordsExam_object.letter_No=letterNo
+        
+        # saving the file 
+        local_file = open(voice_in_mp3_format, 'rb')
+        djangofile = File(local_file)
+        WordsExam_object.voice.save("voice.mp3", djangofile)
+        local_file.close()
+        # saving the object
+        WordsExam_object.save()
+        return HttpResponse('succ')
+    else:
+        return HttpResponse('something in post :()')
+
+        
 
            
 def post_word_to_rest_api(prediction_class,AcutalClass,Wordid):
