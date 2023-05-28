@@ -298,14 +298,19 @@ def indexWord(request):
         #---------post request------------------
         print("shhsu")
         word=''
-        image0 = request.POST.get('image0')
-        image1 = request.POST.get('image1')
-        image2 = request.POST.get('image2')
-        image3 = request.POST.get('image3')
+        imagesForWord=[]
+        
+        WordNo = request.POST.get('WordNo')
+
+        for i in range(int(WordNo)):
+            nameofimage="image"+str(i)
+            image = request.POST.get(nameofimage)
+            imagesForWord.append(image)
+
         text = request.POST.get('text')
         words_id = request.POST.get('words_id')
         print(words_id,text)
-        imagesForWord=[image0,image1,image2,image3]
+        
 
         for x in imagesForWord:
             new_image=convert_base64_image(x)
