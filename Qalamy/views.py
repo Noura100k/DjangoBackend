@@ -12,7 +12,7 @@ import os
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow.lite.python.interpreter import Interpreter
-from .models import MyImage,MyVoiceParent
+from .models import MyImage,MyVoiceParent,Child
 from .api.serializers import MyImageModelSerializer,MyVoiceParentModelSerializer
 from rest_framework.response  import Response
 #--------------
@@ -94,7 +94,7 @@ def convert_base64_image(base64_val):
             return new_image
 
 
-def post_letter_to_rest_api(prediction_class,AcutalClass,letterid):
+def post_letter_to_rest_api(prediction_class,AcutalClass,letterid,challenge_id,Child_id):
     if prediction_class!=AcutalClass:
         correction=0
     else:
@@ -103,6 +103,10 @@ def post_letter_to_rest_api(prediction_class,AcutalClass,letterid):
     CorrectionLetters_object = CorrectionLetters()
     CorrectionLetters_object.correction=correction
     CorrectionLetters_object.letter_ID=LettersExam(id=letterid)
+    CorrectionLetters_object.challenge_id_L=Challenges(id=challenge_id)
+    CorrectionLetters_object.child_id_L=Child(id=Child_id)
+    CorrectionLetters_object.pred_text=prediction_class
+    CorrectionLetters_object.actual_text=AcutalClass
     CorrectionLetters_object.save()
     
  
@@ -142,14 +146,16 @@ def index(request):
         image = request.POST.get('image')
         text = request.POST.get('text')
         letter_id = request.POST.get('letter_id')
-        print(text,letter_id)
+        challenge_id=request.POST.get('Challenge_id')
+        Child_id=request.POST.get('Child_id')
+        print(text,letter_id,challenge_id,Child_id)
         #-----------convert------------------
         new_image=convert_base64_image(image)
         #-----------classification--------------------
         class_name,parent_class_name=model_classification(new_image)
 
         #----------------post to api-------------------
-        post_letter_to_rest_api(parent_class_name,text,letter_id)
+        post_letter_to_rest_api(parent_class_name,text,letter_id,challenge_id,Child_id)
         post_text_to_rest_api(parent_class_name)
         #---------------------------
 
@@ -275,7 +281,7 @@ def WordChallUploadView(request):
         
 
            
-def post_word_to_rest_api(prediction_class,AcutalClass,Wordid):
+def post_word_to_rest_api(prediction_class,AcutalClass,Wordid,Challenge_W,child_id_W):
     if prediction_class!=AcutalClass:
         correction=0
     else:
@@ -284,6 +290,11 @@ def post_word_to_rest_api(prediction_class,AcutalClass,Wordid):
     CorrectionWord_object = CorrectionWords()
     CorrectionWord_object.correction=correction
     CorrectionWord_object.words_ID=WordsExam(id=Wordid)
+    CorrectionWord_object.challenge_id_W=Challenges(id=Challenge_W)
+    CorrectionWord_object.child_id_W=Child(id=child_id_W)
+    CorrectionWord_object.pred_text=prediction_class
+    CorrectionWord_object.actual_text=AcutalClass
+
     CorrectionWord_object.save()
     
  
@@ -309,6 +320,9 @@ def indexWord(request):
 
         text = request.POST.get('text')
         words_id = request.POST.get('words_id')
+        Challenge_W = request.POST.get('wordChallenge_W')
+        child_id_W = request.POST.get('child_id_W')
+
         print(words_id,text)
         
 
@@ -318,7 +332,7 @@ def indexWord(request):
             print(parent_class_name)
             word+=parent_class_name
 
-        post_word_to_rest_api(word,text,words_id)
+        post_word_to_rest_api(word,text,words_id,Challenge_W,child_id_W)
         print(word)
         print("محمد")
         

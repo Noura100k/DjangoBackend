@@ -108,6 +108,10 @@ class LettersExam(models.Model):
 class CorrectionLetters(models.Model):
     correction=models.IntegerField()
     letter_ID=models.ForeignKey(LettersExam, on_delete=models.CASCADE)
+    actual_text=models.TextField(max_length=200,blank=True)
+    pred_text=models.TextField(max_length=200,blank=True)
+    challenge_id_L=models.ForeignKey(Challenges, on_delete=models.CASCADE)
+    child_id_L=models.ForeignKey(Child, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.correction)
@@ -115,6 +119,11 @@ class CorrectionLetters(models.Model):
 class CorrectionWords(models.Model):
     correction=models.IntegerField()
     words_ID=models.ForeignKey(WordsExam, on_delete=models.CASCADE)
+    actual_text=models.TextField(max_length=200,blank=True)
+    pred_text=models.TextField(max_length=200,blank=True)
+    challenge_id_W=models.ForeignKey(Challenges, on_delete=models.CASCADE)
+    child_id_W=models.ForeignKey(Child, on_delete=models.CASCADE)
+
 
     def __str__(self):
         return str(self.correction)

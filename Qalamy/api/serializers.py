@@ -62,10 +62,10 @@ class LettersExamModelSerializer(serializers.ModelSerializer):
 class CorrectionWordsModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = CorrectionWords
-        fields= ('id','correction','words_ID')
+        fields= ('id','correction','words_ID','actual_text','pred_text','challenge_id_W','child_id_W')
 
 #new---------------------------------///
 class CorrectionLettersModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = CorrectionLetters
-        fields= ('id','correction','letter_ID')
+        fields= ('id','correction','letter_ID','actual_text','pred_text','challenge_id_L','child_id_L')
