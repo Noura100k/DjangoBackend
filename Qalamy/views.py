@@ -62,7 +62,7 @@ arabic_letters = {
     'ن': {72: 'ن', 86: 'ـن',24: 'نـ', 92: 'ـنـ'},
     'ه': {67: 'اه', 60: 'ـه', 6: 'هـ', 42: 'ـهـ'},
     'و': {33: 'و',36: 'ـو'},
-    'ي': {59: 'ي', 10: 'ـي', 83: 'يـ', 35: 'م', 'medial2': '\uFEF6'},
+    'ي': {59: 'ي', 10: 'ـي', 83: 'يـ', 53: 'ـيـ', 'medial2': '\uFEF6'},
  
 }
 
@@ -317,7 +317,8 @@ def indexWord(request):
             nameofimage="image"+str(i)
             image = request.POST.get(nameofimage)
             imagesForWord.append(image)
-
+            
+        print(imagesForWord)
         text = request.POST.get('text')
         words_id = request.POST.get('words_id')
         Challenge_W = request.POST.get('wordChallenge_W')
@@ -330,6 +331,7 @@ def indexWord(request):
             new_image=convert_base64_image(x)
             class_name,parent_class_name=model_classification(new_image)
             print(parent_class_name)
+            print("word is append------",word)
             word+=parent_class_name
 
         post_word_to_rest_api(word,text,words_id,Challenge_W,child_id_W)
